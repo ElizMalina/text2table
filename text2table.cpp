@@ -1,0 +1,106 @@
+#include <iostream>
+#include <fstream>
+
+
+
+int main(int argc, char* argv[]) {
+
+	if (argc != 3) {
+		std::cout << "Use: \n"
+			<< "text2table source destination \n";
+		return 1;
+	}
+
+	std::ifstream inFile(argv[1]);
+	if (!inFile) {
+		std::cerr << "Can not open file '" << argv[1] << "'\n";
+		return 2;
+	}
+
+	//1. Пройти по файлу и подсчитать ширины столбцов
+	int lenwords[200] = { 0 };
+	int wordlen = 0;
+	int wordnum = 0;
+	int ch;
+	while (EOF!=(ch = inFile.get())) {
+		if ( ' '==ch ||  '\t'==ch) { // разделитель слов
+			if (wordlen != 0) {
+				if (lenwords[wordnum] < wordlen) {
+					lenwords[wordnum] = wordlen;
+				}
+				wordlen = 0;
+				++wordnum;
+			}
+		}
+		else if (ch == '\n') { // переход на новую строку
+			if (lenwords[wordnum] < wordlen) {
+				lenwords[wordnum] = wordlen;
+			}
+			wordlen = 0;
+			wordnum = 0;
+		}
+		else {
+			++wordlen;
+		}
+	}
+	if (wordlen != 0) {
+		if (lenwords[wordnum] < wordlen) {
+			lenwords[wordnum] = wordlen;
+		}
+	}
+
+	//2. Пройти по файлу и добавить пробелы к словам так, чтобы ширина слова с пробелом стала равна ширине столбца
+
+	inFile.clear(); //отчистить состояние файлы (вернуться в исходное состояние)
+	inFile.seekg(0);//seekg - переместиться 0-в начало
+
+	std::ofstream outFile(argv[2]);
+	if (!outFile.is_open()) {
+		std::cout << "Can not write to file '" << argv[2] << "'\n";
+		inFile.close();
+		return 3;
+	}
+
+	wordlen = 0;
+	wordnum = 0;
+	int charcounter = 0;
+	while (EOF != (ch = inFile.get())) {
+		if (' ' == ch || '\t' == ch) { // разделитель слов
+			if (wordlen != 0) {
+				++wordnum;
+				wordlen = 0;
+				
+			}
+		}
+		else if (ch == '\n') { // переход на новую строку
+			outFile.put('\n');
+			wordlen = 0;
+			wordnum = 0;
+			charcounter = 0;
+		}
+		else {
+			if (wordlen == 0 && wordnum>0) { //Вставить пробелы перед словом
+				while (charcounter <= lenwords[wordnum-1]) {
+					outFile.put(' ');
+					++charcounter;
+				}
+				charcounter = 0;
+			}
+			outFile.put(ch);
+			++wordlen;
+			++charcounter;
+		}
+	}
+
+	inFile.close();
+	outFile.close();
+	return 0;
+	
+// for (int i = 0; i < 200; ++i) {
+	//	std::cout << lenwords[i] << " ";
+	//}
+	
+}
+
+
+
