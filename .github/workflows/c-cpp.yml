@@ -19,4 +19,6 @@ jobs:
       run: ./text2table tests/in/in_1.txt outfile.txt && cmp outfile.txt tests/out/in_1.txt
     - name: Linter
       run: clang-tidy text2table.cpp
+    - name: Linter (alt)
+      uses: amcp-pit/cpp-linter@v1
 
