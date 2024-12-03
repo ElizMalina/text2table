@@ -17,13 +17,12 @@ int main(int argc, char* argv[]) {
 		return 2;
 	}
 
-	//1. Пройти по файлу и подсчитать ширины столбцов
 	int lenwords[200] = { 0 };
 	int wordlen = 0;
 	int wordnum = 0;
 	int ch;
 	while (EOF!=(ch = inFile.get())) {
-		if ( ' '==ch ||  '\t'==ch) { // разделитель слов
+		if ( ' '==ch ||  '\t'==ch) { 
 			if (wordlen != 0) {
 				if (lenwords[wordnum] < wordlen) {
 					lenwords[wordnum] = wordlen;
@@ -32,7 +31,7 @@ int main(int argc, char* argv[]) {
 				++wordnum;
 			}
 		}
-		else if (ch == '\n') { // переход на новую строку
+		else if (ch == '\n') { 
 			if (lenwords[wordnum] < wordlen) {
 				lenwords[wordnum] = wordlen;
 			}
@@ -49,10 +48,10 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	//2. Пройти по файлу и добавить пробелы к словам так, чтобы ширина слова с пробелом стала равна ширине столбца
+	
 
-	inFile.clear(); //отчистить состояние файлы (вернуться в исходное состояние)
-	inFile.seekg(0);//seekg - переместиться 0-в начало
+	inFile.clear(); 
+	inFile.seekg(0);
 
 	std::ofstream outFile(argv[2]);
 	if (!outFile.is_open()) {
@@ -65,21 +64,21 @@ int main(int argc, char* argv[]) {
 	wordnum = 0;
 	int charcounter = 0;
 	while (EOF != (ch = inFile.get())) {
-		if (' ' == ch || '\t' == ch) { // разделитель слов
+		if (' ' == ch || '\t' == ch) {
 			if (wordlen != 0) {
 				++wordnum;
 				wordlen = 0;
 				
 			}
 		}
-		else if (ch == '\n') { // переход на новую строку
+		else if (ch == '\n') { 
 			outFile.put('\n');
 			wordlen = 0;
 			wordnum = 0;
 			charcounter = 0;
 		}
 		else {
-			if (wordlen == 0 && wordnum>0) { //Вставить пробелы перед словом
+			if (wordlen == 0 && wordnum>0) { 
 				while (charcounter <= lenwords[wordnum-1]) {
 					outFile.put(' ');
 					++charcounter;
@@ -95,10 +94,6 @@ int main(int argc, char* argv[]) {
 	inFile.close();
 	outFile.close();
 	return 0;
-	
-// for (int i = 0; i < 200; ++i) {
-	//	std::cout << lenwords[i] << " ";
-	//}
 	
 }
 
