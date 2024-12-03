@@ -8,6 +8,7 @@ int main(int argc, char* argv[]) {
 	if (argc != 3) {
 		std::cout << "Use: \n"
 			<< "text2table source destination \n";
+		
 		return 1;
 	}
 
